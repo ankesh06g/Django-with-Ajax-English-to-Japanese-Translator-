@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block custom_css %}
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script> 
+    <style>
+        input{
+            padding: 20px;
+            margin: 10px;
+            font-size: 35px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block title %}English to Japanese{% endblock %}
+
+
+{% block header %}
+    <h1>English to Japnese</h1>
+{% endblock %}
+
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-6">
+            <form method="POST" id="trans-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="usr">English:</label>
+                    <input type="text" name="input_text" id="input_text" placeholder="start typing here...">
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="usr">Japanese:</label>
+                <input type="text" name="output_text" id="output_text" readonly>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block custom_js %}
+<script>  
+    $(document).ready(function(e){  
+        $("#input_text").keyup(function(){ 
+            var text = $(this).val() 
+            $.ajax({
+                type:'POST',
+                url:'{% url "engtojap:translator" %}',
+                data:{
+                    input_text:text,
+                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                    action: 'post'
+                },
+                success:function(data){
+                    $("#output_text").val(data)
+                }
+            });
+        });  
+    });  
+</script>  
+{% endblock %} 
